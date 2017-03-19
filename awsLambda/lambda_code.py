@@ -12,8 +12,8 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         },
         'card': {
             'type': 'Simple',
-            'title': "SessionSpeechlet - " + title,
-            'content': "SessionSpeechlet - " + output
+            'title': "My Twitch Streams - " + title,
+            'content': output
         },
         'reprompt': {
             'outputSpeech': {
@@ -32,8 +32,8 @@ def build_login_card_response(title, output, reprompt_text, should_end_session):
         },
         'card': {
             'type': 'LinkAccount',
-            'title': "SessionSpeechlet - " + title,
-            'content': "SessionSpeechlet - " + output
+            'title': "My Twitch Streams - " + title,
+            'content': output
         },
         'reprompt': {
             'outputSpeech': {
@@ -89,6 +89,9 @@ def twitch_my_top_streamers(num_of_responses, auth_info):
     api_response = requests.get(url, headers=headers)
     json = api_response.json()
 
+    if 'streams' not in json:
+        return None
+
     streams = ""
     i = 0
 
@@ -96,7 +99,7 @@ def twitch_my_top_streamers(num_of_responses, auth_info):
         if streams != "":
             streams = streams + ", "
         streams = streams + json['streams'][i]['channel']['display_name']
-
+        i = i + 1
     return streams
 
 
@@ -131,12 +134,18 @@ def get_twitch_api_info():
 # --------------- Functions that modify behavior --------------------------------
 
 def get_welcome_response(session):
-    # TODO tell user if they are authenticated
+    if get_twitch_auth(session) is None:
+        return get_login_card()
+
     session_attributes = {}
     card_title = "Welcome to the My Twitch Streams Alexa Skill"
-    speech_output = "Welcome to the My Twitch streams app. To use please to do"
-    reprompt_text = "To use this skill, please todo"
-    should_end_session = False
+    speech_output = "Welcome to the My Twitch streams skill. " \
+                    "To get your followed live streams say ask {0} who is streaming. " \
+                    "To get the top streams right now say ask {0} what are the top streams. " \
+                    "To get the top streams by game say ask {0} who is streaming League of Legends"\
+        .format(get_skill_invocation_name())
+    reprompt_text = None
+    should_end_session = True
 
     return build_response(session_attributes,
                           build_speechlet_response(card_title, speech_output, reprompt_text, should_end_session))
@@ -176,7 +185,7 @@ def get_my_top_streamers(session):
 
     my_top_streamers = twitch_my_top_streamers(num_of_streams, auth_info)
     session_attributes = {}
-    card_title = "Top Twitch Streamers On Now"
+    card_title = "Your Twitch Streamers On Now"
     speech_output = "Here are your top {} streamers: {}".format(num_of_streams, my_top_streamers)
     reprompt_text = None
     should_end_session = True
@@ -195,7 +204,7 @@ def get_game_top_streamers(request, session):
 
     streamers = twitch_game_top_streamers(num_of_streams, game)
     session_attributes = {}
-    card_title = "Top Twitch Streamers On Now"
+    card_title = "Top Twitch Streamers On Now For {}".format(game)
     speech_output = "Here are the top {} streamers for {}: {}".format(num_of_streams, game, streamers)
     reprompt_text = None
     should_end_session = True
@@ -217,13 +226,20 @@ def get_invalid_game_response():
 def get_login_card():
     session_attributes = {}
     card_title = "Register With Twitch"
-    speech_output = "Please register with your twitch account if you wish to get information about your followed streams"
+    speech_output = "Thank you for using my twitch streams. " \
+                    "Please register with your twitch account if you wish to get information about your followed streams." \
+                    "You can still get the top streams by saying ask {0} what are the top streams," \
+                    "or get the top streams by game by saying ask {0} who is streaming League of Legends"\
+        .format(get_skill_invocation_name())
     reprompt_text = None
     should_end_session = True
 
     return build_response(session_attributes,
                           build_login_card_response(card_title, speech_output, reprompt_text, should_end_session))
 
+
+def get_skill_invocation_name():
+    return "twitch"
 # ---------------------------- Events -------------------------------------------
 
 def on_intent(request, session):
