@@ -51,19 +51,33 @@ def twitch_top_streamers(num_of_responses):
 
     streams = ""
     for num in range(0, num_of_responses):
-        streams = streams + " " + json['streams'][num]['channel']['display_name']
+        if streams != "":
+            streams = streams + ", "
+        streams = streams + json['streams'][num]['channel']['display_name']
 
     return streams
 
 
-def twitch_my_top_streamers(num_of_response, auth_info):
+def twitch_my_top_streamers(num_of_responses, auth_info):
     return "Not implemented yet"
     # TODO
 
 
-def twitch_game_top_streamers(num_of_response, game):
-    return "Not implemented yet"
-    # TODO
+def twitch_game_top_streamers(num_of_responses, game):
+    api_info = get_twitch_api_info()
+    url = api_info['base_api_url'] + api_info['top_game_streams'].format(game)
+    headers = {"Accept": "application/json", "Client-ID": api_info['Client-ID']}
+
+    api_response = requests.get(url, headers=headers)
+    json = api_response.json()
+
+    streams = ""
+    for num in range(0, num_of_responses):
+        if streams != "":
+            streams = streams + ", "
+        streams = streams + json['streams'][num]['channel']['display_name']
+
+    return streams
 
 
 def get_twitch_api_info():
@@ -104,7 +118,6 @@ def get_end_response():
 
 def get_top_streamers(session):
     num_of_streams = 5
-    auth_info = get_twitch_auth(session)
     top_streamers = twitch_top_streamers(num_of_streams)
 
     session_attributes = {}
@@ -135,12 +148,27 @@ def get_my_top_streamers(session):
 
 def get_game_top_streamers(request, session):
     num_of_streams = 5
-    game = request['intent']['slots']['Game']['value']
-    streamers = twitch_game_top_streamers(num_of_streams, game)
+    game = get_twitch_game_name(request['intent']['slots']['Game']['value'])
 
+    if game is None:
+        return get_invalid_game_response()
+
+
+    streamers = twitch_game_top_streamers(num_of_streams, game)
     session_attributes = {}
     card_title = "Top Twitch Streamers On Now"
     speech_output = "Here are the top {} streamers for {}: {}".format(num_of_streams, game, streamers)
+    reprompt_text = None
+    should_end_session = False
+
+    return build_response(session_attributes,
+                          build_speechlet_response(card_title, speech_output, reprompt_text, should_end_session))
+
+
+def get_invalid_game_response():
+    session_attributes = {}
+    card_title = "Unknown game"
+    speech_output = "Unknown game, please try again"
     reprompt_text = None
     should_end_session = False
 
@@ -203,3 +231,17 @@ def lambda_handler(event, context):
         return on_end(event['request'], event['session'])
     else:
         raise ValueError("Invalid request: " + event['request']['type'])
+
+
+# ------------------------- Game Name Conversion -----------------------
+def get_twitch_game_name(game):
+    name_dict = {}
+    with open("twitchGameNameConversions.txt") as f:
+        for line in f:
+            (key, val) = line.split(",")
+            name_dict[key.lower().strip()] = val.strip()
+
+    if game.lower() in name_dict:
+        return name_dict[game.lower().strip()]
+    else:
+        return None
