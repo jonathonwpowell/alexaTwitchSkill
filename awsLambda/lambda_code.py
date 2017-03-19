@@ -1,6 +1,5 @@
 import requests
 
-
 # --------------- Helpers that build all of the responses ----------------------
 # These helpers are from amazon
 
@@ -25,6 +24,26 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         'shouldEndSession': should_end_session
     }
 
+def build_login_card_response(title, output, reprompt_text, should_end_session):
+    return {
+        'outputSpeech': {
+            'type': 'PlainText',
+            'text': output
+        },
+        'card': {
+            'type': 'LinkAccount',
+            'title': "SessionSpeechlet - " + title,
+            'content': "SessionSpeechlet - " + output
+        },
+        'reprompt': {
+            'outputSpeech': {
+                'type': 'PlainText',
+                'text': reprompt_text
+            }
+        },
+        'shouldEndSession': should_end_session
+    }
+
 
 def build_response(session_attributes, speechlet_response):
     return {
@@ -36,8 +55,10 @@ def build_response(session_attributes, speechlet_response):
 
 # ---------------------- Twitch Auth Helpers--------------------------------------
 def get_twitch_auth(session):
-    raise NotImplementedError
-    # TODO
+    if 'accessToken' in session['user']:
+        return session['user']['accessToken']
+    else:
+        return None
 
 
 # ------------------------Twitch API Helpers -------------------------------------
@@ -59,8 +80,24 @@ def twitch_top_streamers(num_of_responses):
 
 
 def twitch_my_top_streamers(num_of_responses, auth_info):
-    return "Not implemented yet"
-    # TODO
+    api_info = get_twitch_api_info()
+    url = api_info['base_api_url'] + api_info['my_top_streams']
+    headers = {"Accept": "application/json",
+               "Client-ID": api_info['Client-ID'],
+               "Authorization":"OAuth " + auth_info}
+
+    api_response = requests.get(url, headers=headers)
+    json = api_response.json()
+
+    streams = ""
+    i = 0
+
+    while i < num_of_responses and i < len(json['streams']):
+        if streams != "":
+            streams = streams + ", "
+        streams = streams + json['streams'][i]['channel']['display_name']
+
+    return streams
 
 
 def twitch_game_top_streamers(num_of_responses, game):
@@ -86,7 +123,7 @@ def get_twitch_api_info():
         "base_api_url": "https://api.twitch.tv/kraken/",
         "top_streams": "streams",
         "top_game_streams": "streams/?game={}",
-        "my_top_streams": "/followed"
+        "my_top_streams": "streams/followed"
     }
     return api_info
 
@@ -124,7 +161,7 @@ def get_top_streamers(session):
     card_title = "Top Twitch Streamers On Now"
     speech_output = "Here are the top {} streamers: {}".format(num_of_streams, top_streamers)
     reprompt_text = None
-    should_end_session = False
+    should_end_session = True
 
     return build_response(session_attributes,
                           build_speechlet_response(card_title, speech_output, reprompt_text, should_end_session))
@@ -134,13 +171,15 @@ def get_my_top_streamers(session):
     num_of_streams = 5
 
     auth_info = get_twitch_auth(session)
-    my_top_streamers = twitch_my_top_streamers(num_of_streams, auth_info)
+    if auth_info is None:
+        return get_login_card()
 
+    my_top_streamers = twitch_my_top_streamers(num_of_streams, auth_info)
     session_attributes = {}
     card_title = "Top Twitch Streamers On Now"
     speech_output = "Here are your top {} streamers: {}".format(num_of_streams, my_top_streamers)
     reprompt_text = None
-    should_end_session = False
+    should_end_session = True
 
     return build_response(session_attributes,
                           build_speechlet_response(card_title, speech_output, reprompt_text, should_end_session))
@@ -159,7 +198,7 @@ def get_game_top_streamers(request, session):
     card_title = "Top Twitch Streamers On Now"
     speech_output = "Here are the top {} streamers for {}: {}".format(num_of_streams, game, streamers)
     reprompt_text = None
-    should_end_session = False
+    should_end_session = True
 
     return build_response(session_attributes,
                           build_speechlet_response(card_title, speech_output, reprompt_text, should_end_session))
@@ -170,11 +209,20 @@ def get_invalid_game_response():
     card_title = "Unknown game"
     speech_output = "Unknown game, please try again"
     reprompt_text = None
-    should_end_session = False
+    should_end_session = True
 
     return build_response(session_attributes,
                           build_speechlet_response(card_title, speech_output, reprompt_text, should_end_session))
 
+def get_login_card():
+    session_attributes = {}
+    card_title = "Register With Twitch"
+    speech_output = "Please register with your twitch account if you wish to get information about your followed streams"
+    reprompt_text = None
+    should_end_session = True
+
+    return build_response(session_attributes,
+                          build_login_card_response(card_title, speech_output, reprompt_text, should_end_session))
 
 # ---------------------------- Events -------------------------------------------
 
