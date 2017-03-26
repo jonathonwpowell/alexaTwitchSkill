@@ -27,9 +27,12 @@ FIFA, FIFA 17
 Warcraft III: The Frozen Throne,Warcraft III: The Frozen Throne
 Warcraft III,Warcraft III: The Frozen Throne
 Warcraft three,Warcraft III: The Frozen Throne
+Warcraft 3,Warcraft III: The Frozen Throne
 Dota 2,Dota 2
 Dota two,Dota 2
 Path of Exile,Path of Exile
 Starcraft two,Starcraft II
 SC two,Starcraft II
+SC 2,Starcraft II
+Starcraft 2,Starcraft II
 minecraft,minecraft
