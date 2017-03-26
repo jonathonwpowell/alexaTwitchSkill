@@ -1,0 +1,11 @@
+I retain the right to save any commands you send to the app for the purpose of improving the app.
+  For exaple if you say "Alexa ask my twitch streams who is streaming minecraft" I will save this
+  
+I will not store any data that allows me to access your twitch account or to identify your twitch account
+  (the only thing I have access to is a token that allows me to read data about your twitch account, and I won't save it)
+
+If you link your twitch account, you give me user_read & user_subscriptions permission (find the definitions here: https://dev.twitch.tv/docs/v5/guides/authentication/#Scopes)
+
+I will not store any data that allows me to identify you
+
+Twitch's privacy policy is here: https://www.twitch.tv/p/privacy-policy
