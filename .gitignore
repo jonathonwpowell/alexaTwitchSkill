@@ -10,3 +10,11 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+awsLamda/.idea/
+awsLambda/requests/
+awsLambda/.idea/modules.xml
+awsLambda/requests-2.13.0.dist-info/DESCRIPTION.rst
+awsLambda/requests-2.13.0.dist-info/
+awsLambda/.idea/
+awsLambda/awsLamda.zip
+.idea/

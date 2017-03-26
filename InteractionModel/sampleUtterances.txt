@@ -1,0 +1,18 @@
+GetMyStreams what are my current streams
+GetMyStreams what are my streams
+GetMyStreams what are my live streams
+GetMyStreams what's live
+GetMyStreams what streams are live
+GetMyStreams live streams
+GetMyStreams who is on
+GetMyStreams who is streaming
+GetMyStreams live streamers
+
+GetTopStreams who are the top streamers right now
+GetTopStreams what are the top streams right now
+GetTopStreams who are the top streamers
+GetTopStreams what are the top streams
+
+GetTopStreamsByGame who are the top streamers for {Game}
+GetTopStreamsByGame who are the streamers for {Game}
+GetTopStreamsByGame who is streaming {Game}

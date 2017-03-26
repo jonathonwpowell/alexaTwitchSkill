@@ -1,0 +1,25 @@
+{
+  "intents": [
+    {
+      "intent": "GetMyStreams"
+    },
+    {
+      "intent": "GetTopStreams"
+    },
+    {
+      "intent": "GetTopStreamsByGame",
+      "slots": [
+        {
+          "name": "Game",
+          "type": "LIST_OF_GAMES"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    }
+  ]
+}
