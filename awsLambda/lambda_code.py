@@ -100,6 +100,10 @@ def twitch_my_top_streamers(num_of_responses, auth_info):
             streams = streams + ", "
         streams = streams + json['streams'][i]['channel']['display_name']
         i = i + 1
+
+    if not streams:
+        return 'no followed streams are live'
+
     return streams
 
 
@@ -168,7 +172,7 @@ def get_top_streamers(session):
 
     session_attributes = {}
     card_title = "Top Twitch Streamers On Now"
-    speech_output = "Here are the top {} streamers: {}".format(num_of_streams, top_streamers)
+    speech_output = "Here are the top available streamers: {}".format(top_streamers)
     reprompt_text = None
     should_end_session = True
 
@@ -184,9 +188,14 @@ def get_my_top_streamers(session):
         return get_login_card()
 
     my_top_streamers = twitch_my_top_streamers(num_of_streams, auth_info)
+
+
+    if my_top_streamers is None:
+        return get_login_card()
+
     session_attributes = {}
     card_title = "Your Twitch Streamers On Now"
-    speech_output = "Here are your top {} streamers: {}".format(num_of_streams, my_top_streamers)
+    speech_output = "Here are your top available streamers: {}".format(my_top_streamers)
     reprompt_text = None
     should_end_session = True
 
@@ -205,7 +214,7 @@ def get_game_top_streamers(request, session):
     streamers = twitch_game_top_streamers(num_of_streams, game)
     session_attributes = {}
     card_title = "Top Twitch Streamers On Now For {}".format(game)
-    speech_output = "Here are the top {} streamers for {}: {}".format(num_of_streams, game, streamers)
+    speech_output = "Here are the top available streamers for {}: {}".format(game, streamers)
     reprompt_text = None
     should_end_session = True
 
