@@ -236,8 +236,8 @@ def get_login_card():
     session_attributes = {}
     card_title = "Register With Twitch"
     speech_output = "Thank you for using my twitch streams. " \
-                    "Please register with your twitch account if you wish to get information about your followed streams." \
-                    "You can still get the top streams by saying ask {0} what are the top streams," \
+                    "Please register with your twitch account if you wish to get information about your followed streams. " \
+                    "You can still get the top streams by saying ask {0} what are the top streams, " \
                     "or get the top streams by game by saying ask {0} who is streaming League of Legends"\
         .format(get_skill_invocation_name())
     reprompt_text = None
@@ -248,7 +248,7 @@ def get_login_card():
 
 
 def get_skill_invocation_name():
-    return "twitch"
+    return "my twitch streams"
 # ---------------------------- Events -------------------------------------------
 
 def on_intent(request, session):
