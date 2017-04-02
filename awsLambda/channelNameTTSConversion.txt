@@ -1,0 +1,9 @@
+NALCS1,N A L C S 1
+NALCS2,N A L C S 2
+imaqtpie,i'm a cutie pi
+ESL_CSGO,ESL CS GO
+TSM_Bjergsen,TSM Bjergsen
+TSM_Dyrus,TSM Dyrus
+dreamhackcs,dreamhack cs
+EULCS1,E U L C S 1
+EULCS2,E U L C S 2
