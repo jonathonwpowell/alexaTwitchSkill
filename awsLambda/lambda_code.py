@@ -14,7 +14,11 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         'card': {
             'type': 'Simple',
             'title': "My Twitch Streams - " + title,
-            'content': output
+            'content': output,
+            'image': {
+                'smallImageUrl': 'https://i.imgur.com/fCtBuDV.png',
+                'largeImageUrl': 'https://i.imgur.com/JQj46rE.png'
+            }
         },
         'reprompt': {
             'outputSpeech': {
@@ -35,7 +39,11 @@ def build_login_card_response(title, output, reprompt_text, should_end_session):
         'card': {
             'type': 'LinkAccount',
             'title': "My Twitch Streams - " + title,
-            'content': output
+            'content': output,
+            'image': {
+                'smallImageUrl': 'https://i.imgur.com/fCtBuDV.png',
+                'largeImageUrl': 'https://i.imgur.com/JQj46rE.png'
+            }
         },
         'reprompt': {
             'outputSpeech': {
