@@ -14,11 +14,7 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         'card': {
             'type': 'Simple',
             'title': "My Twitch Streams - " + title,
-            'content': output,
-            'image': {
-                'smallImageUrl': 'https://i.imgur.com/fCtBuDV.png',
-                'largeImageUrl': 'https://i.imgur.com/JQj46rE.png'
-            }
+            'content': output
         },
         'reprompt': {
             'outputSpeech': {
@@ -39,11 +35,7 @@ def build_login_card_response(title, output, reprompt_text, should_end_session):
         'card': {
             'type': 'LinkAccount',
             'title': "My Twitch Streams - " + title,
-            'content': output,
-            'image': {
-                'smallImageUrl': 'https://i.imgur.com/fCtBuDV.png',
-                'largeImageUrl': 'https://i.imgur.com/JQj46rE.png'
-            }
+            'content': output
         },
         'reprompt': {
             'outputSpeech': {
@@ -159,7 +151,7 @@ def get_welcome_response(session):
                     "To get the top streams by game say ask {0} who is streaming League of Legends" \
         .format(get_skill_invocation_name())
     reprompt_text = None
-    should_end_session = True
+    should_end_session = False
 
     return build_response(session_attributes,
                           build_speechlet_response(card_title, speech_output, reprompt_text, should_end_session))
