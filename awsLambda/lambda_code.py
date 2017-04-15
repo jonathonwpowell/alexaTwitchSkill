@@ -13,7 +13,7 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         },
         'card': {
             'type': 'Simple',
-            'title': "My Twitch Streams - " + title,
+            'title': title,
             'content': output
         },
         'reprompt': {
@@ -34,7 +34,7 @@ def build_login_card_response(title, output, reprompt_text, should_end_session):
         },
         'card': {
             'type': 'LinkAccount',
-            'title': "My Twitch Streams - " + title,
+            'title': title,
             'content': output
         },
         'reprompt': {
@@ -146,9 +146,9 @@ def get_welcome_response(session):
     session_attributes = {}
     card_title = "Welcome to the My Twitch Streams Alexa Skill"
     speech_output = "Welcome to the My Twitch streams skill. " \
-                    "To get your followed live streams say ask {0} who is streaming. " \
-                    "To get the top streams right now say ask {0} what are the top streams. " \
-                    "To get the top streams by game say ask {0} who is streaming League of Legends" \
+                    "To get your available streams ask who is streaming. " \
+                    "To get the top available streams ask what are the top streams. " \
+                    "To get the top streams by game ask who is streaming League of Legends" \
         .format(get_skill_invocation_name())
     reprompt_text = None
     should_end_session = False
@@ -226,9 +226,9 @@ def get_game_top_streamers(request, session):
 def get_invalid_game_response():
     session_attributes = {}
     card_title = "Unknown game"
-    speech_output = "Unknown game, please try again"
+    speech_output = "Unknown game, please try again. Please note many games are not supported"
     reprompt_text = None
-    should_end_session = True
+    should_end_session = False
 
     return build_response(session_attributes,
                           build_speechlet_response(card_title, speech_output, reprompt_text, should_end_session))
@@ -239,11 +239,11 @@ def get_login_card():
     card_title = "Register With Twitch"
     speech_output = "Thank you for using my twitch streams. " \
                     "Please register with your twitch account if you wish to get information about your followed streams. " \
-                    "You can still get the top streams by saying ask {0} what are the top streams, " \
-                    "or get the top streams by game by saying ask {0} who is streaming League of Legends" \
+                    "You can still get the top streams by asking what are the top streams, " \
+                    "or get the top streams by game by asking who is streaming League of Legends" \
         .format(get_skill_invocation_name())
     reprompt_text = None
-    should_end_session = True
+    should_end_session = False
 
     return build_response(session_attributes,
                           build_login_card_response(card_title, speech_output, reprompt_text, should_end_session))
@@ -335,11 +335,13 @@ def switch_names_for_TTS(toConvert):
     conversion_dict = {}
 
     with open("channelNameTTSConversion.txt") as f:
+        print 'reading in name conversion file'
         for line in f:
             (key, val) = line.split(",")
-            conversion_dict[key.lower().strip()] = val.strip()
+            conversion_dict[key.strip()] = val.strip()
 
     for display_name in conversion_dict:
-        return_text = return_text.replace(display_name, conversion_dict[display_name])
+        if display_name in return_text:
+            return_text = return_text.replace(display_name, conversion_dict[display_name])
 
     return return_text
