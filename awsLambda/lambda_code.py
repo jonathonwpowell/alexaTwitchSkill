@@ -267,6 +267,8 @@ def on_intent(request, session):
         return get_game_top_streamers(request, session)
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
         return get_end_response()
+    elif intent_name == "AMAZON.HelpIntent":
+        return get_welcome_response(session)
     else:
         print ("Invalid intent passed in: {}".format(intent_name))
         raise ValueError("Invalid intent: " + intent_name)
