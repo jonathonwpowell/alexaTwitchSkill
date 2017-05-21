@@ -9,7 +9,7 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
     return {
         'outputSpeech': {
             'type': 'PlainText',
-            'text': switch_names_for_TTS(output)
+            'text': clean_return_for_TTS(output)
         },
         'card': {
             'type': 'Simple',
@@ -119,9 +119,13 @@ def twitch_game_top_streamers(num_of_responses, game):
 
     streams = ""
     for num in range(0, num_of_responses):
-        if streams != "":
-            streams = streams + ", "
-        streams = streams + json['streams'][num]['channel']['display_name']
+        if num < len(json['streams']):
+            if streams != "":
+                streams = streams + ", "
+            streams = streams + json['streams'][num]['channel']['display_name']
+
+    if not streams:
+        return 'no streams are available'
 
     return streams
 
@@ -326,7 +330,15 @@ def get_twitch_game_name(game):
         return None
 
 
-# ------------------------------------------------------------------------
+# -----------------------------------TTS Conversions-------------------------------------
+def clean_return_for_TTS(toConvert):
+    temp = switch_names_for_TTS(toConvert)
+    toReturn = remove_underscore_for_TTS(temp)
+    return toReturn
+
+
+def remove_underscore_for_TTS(toConvert):
+    return toConvert.replace("_"," ")
 
 # This is to change the name of the streamer to a way that Alexa TTS will say it correctly
 def switch_names_for_TTS(toConvert):
