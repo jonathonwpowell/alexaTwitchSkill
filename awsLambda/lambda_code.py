@@ -332,6 +332,9 @@ def get_twitch_game_name(game):
 
 # -----------------------------------TTS Conversions-------------------------------------
 def clean_return_for_TTS(toConvert):
+    if not toConvert:
+        return ''
+
     temp = switch_names_for_TTS(toConvert)
     toReturn = remove_underscore_for_TTS(temp)
     return toReturn
